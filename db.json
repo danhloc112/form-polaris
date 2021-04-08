@@ -1,0 +1,11 @@
+{
+    "users": [
+        {
+            "id": 1,
+            "name": "Loc Tran",
+            "address": " 423 Minh Khai",
+            "phone": "0339510369",
+            "email": "loc@gmail.com"
+        }
+    ]
+}
