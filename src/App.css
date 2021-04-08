@@ -3,20 +3,28 @@
   line-height: 44px;
   font-weight: 500;
   margin-top: 20px;
-  background-color: rgb(110, 214, 255);
+  
   width: 100%;
   text-align: center;
   min-height: 100px;
   display: flex;
+  border-radius: 10px;
+  background-color: rgb(255, 255, 255);
 }
 .header p {
   justify-content: center;
 }
 .navigation {
-  margin-top: 20px;
+  margin-top: 10px;
+  border-radius: 10px;
+  background-color: rgb(255, 255, 255);
+  padding: 20px 0;
 }
 .form-input {
-  margin-top: 20px;
+  margin-top: 10px;
+  border-radius: 10px;
+  background-color: rgb(255, 255, 255);
+  padding: 20px 0;
 } 
 .warning {
   color:rgb(247, 65, 65)

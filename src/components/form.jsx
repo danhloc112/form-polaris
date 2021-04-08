@@ -27,10 +27,12 @@ const Form = () => {
     const [verify,setVerify] = useState(false)
     const [firstOk,setFirstOk] = useState(false)
     const [phoneOk, setPhoneOk] = useState(false)
-    const [userOk, setUserOk] = useState(false)
+    // const [userOk, setUserOk] = useState(false)
     const [emailOk, setEmailOk] = useState(false)
-    const [addressOk, setAddressOk] = useState(false)
-    const [passOk, setPassOk] = useState(false)
+    const [addressOk,setAddressOk] = useState(false)
+    const [create,setCreate] = useState(false)    
+    
+    // const [passOk, setPassOk] = useState(false)
     
     
     // const debouncedKeyUp = _.debounce((value) => {
@@ -142,22 +144,7 @@ const Form = () => {
     //         setShowConfirmType(false)
     //     }
     // },[])
-    const handleVerified = (e) => {
-        
-        setVerify(true)
-    }
-    // const handleSubmit = useCallback((e, verify,firstOk,lastOk,userOk,emailOk,passOk,addressOk) => {
-    //     console.log("object");
-    //     if (verify && firstOk && lastOk && userOk && emailOk && passOk && addressOk) {
-    //         alert('Success!')
-    //     }
-    //     else {
-    //         alert('Please input all of fields!')
-    //     }
-    // }, [])
-    const handleSubmit = async (e) => {
-        if (verify && firstOk && phoneOk && emailOk && addressOk) {
-            
+    const handleVerified = async () => {
         await fetch(url, {
             method: 'POST',
             body: JSON.stringify({
@@ -170,55 +157,96 @@ const Form = () => {
                 'Content-type': 'application/json; charset=UTF-8',
             },
             })
-        .then((response) => response.json())
-        .then((json) => console.log("JSON", json));
+            .then((response) => response.json())
+            .then((json) => console.log("JSON",json));
+        await fetch(url)
+        .then(res => res.json())
+        .then(js => console.log("JSON", js))
+        alert('Success!')
+        setVerify(false)
         
-       
-            alert('Success!')
+    }
+    // const handleSubmit = useCallback((e, verify,firstOk,lastOk,userOk,emailOk,passOk,addressOk) => {
+    //     console.log("object");
+    //     if (verify && firstOk && lastOk && userOk && emailOk && passOk && addressOk) {
+    //         alert('Success!')
+    //     }
+    //     else {
+    //         alert('Please input all of fields!')
+    //     }
+    // }, [])
+    const handleSubmit = (e) => {
+        
+        if (firstOk && phoneOk && emailOk && addressOk) {
+            setVerify(true)
         }
         else {
-            await fetch(url)
-            .then(res => res.json())
-            .then(js => console.log("JSON", js))
-            alert('Please input all of fields!')
+            setVerify(false)
+            setShowAddress(true)
+            setShowEmail(true)
+            setShowPhone(true)
+            setShowFirstName(true)
         }
     }
     return (
-        <FormLayout onSubmit= {(e) => handleSubmit(e)}>
-            <TextField label="Full Name(*)" onChange={(e) => handleFullNameChange(e)} value={firstName}/>
-            {showFirstName && <p className="warning">Input your first name, please!</p>}
-            
-
-            {/* <TextField label="Username(*)" onChange={(e) => handleUserChange(e)} value={username}/>
-            {showUsername && <p className="warning">Input your username, please!</p>}
-            {showUsernameMin && <p className="warning">Your username must be longer than 6 characters!</p>} */}
-
-            <TextField type="email" label="Email(*)" onChange={(e) => handleEmailChange(e)} value={email} />
-            {showEmail && <p className="warning">Input your email, please!</p>}
-            {showEmailType && <p className="warning">Your email is not right format!</p>}
-
-            {/* <TextField type="password" label="Password(*)" onChange={(e) => handlePassChange(e)} value={ password}/>
-            {showPassword && <p className="warning">Input your password, please!</p>}
-            {showPassType && <p className="warning">Your password must be at least 8 characters and contain numbers and letters</p>}
-
-            <TextField type="password" label="Confirm Password(*)" onChange={(e) => handleConfirmChange(e, password)} value={confirm}/>
-            {showConfirm && <p className="warning">Confirm your password, please!</p>}
-            {showConfirmType && <p className="warning">Your password is not match!</p>} */}
-
-            <TextField label="Address(*)" onChange={(e) => handleAddressChange(e)} value={address}/>
-            {showAddress && <p className="warning">Input your address, please!</p>}
-
-            <TextField label="Phone Number(*)" onChange={(e) => handlePhoneChange(e)}  value={phone}/>
-            {showPhone && <p className="warning">Input your phone numbers, please!</p>}
-            {showPhoneType && <p className="warning">Your phone number is not right format!</p>}
-
-            <ReCAPTCHA
-                sitekey="6LftMKEaAAAAAMFVIG7Qcma2394rdYh5srsZlnXd"
-                onChange={handleVerified}
+        <>
+            <div className="row navigation">
+                <div className="col l-4 l-0-3">
+                <Button style={{ marginRight: 10 }} primary onClick={() => setCreate(!create)}>Create user</Button>
+                {'  '}
+                <Button primary>Show user</Button>
                 
-            />
-            <Button onClick={(e) => handleSubmit(e)}>Submit</Button>
-        </FormLayout>
+                </div>
+            </div>
+            {create &&
+                <div className="row form-input">
+                    <div className="col l-6 l-0-3">
+                    <FormLayout onSubmit= {(e) => handleSubmit(e)}>
+                        <TextField label="Full Name(*)" onChange={(e) => handleFullNameChange(e)} value={firstName} placeholder="Input your first name"/>
+                        {showFirstName && <p className="warning">Input your first name, please!</p>}
+                        
+
+                        {/* <TextField label="Username(*)" onChange={(e) => handleUserChange(e)} value={username}/>
+                        {showUsername && <p className="warning">Input your username, please!</p>}
+                        {showUsernameMin && <p className="warning">Your username must be longer than 6 characters!</p>} */}
+
+                        <TextField type="email" label="Email(*)" onChange={(e) => handleEmailChange(e)} value={email} placeholder="Input your email" />
+                        {showEmail && <p className="warning">Input your email, please!</p>}
+                        {showEmailType && <p className="warning">Your email is not right format!</p>}
+
+                        {/* <TextField type="password" label="Password(*)" onChange={(e) => handlePassChange(e)} value={ password}/>
+                        {showPassword && <p className="warning">Input your password, please!</p>}
+                        {showPassType && <p className="warning">Your password must be at least 8 characters and contain numbers and letters</p>}
+
+                        <TextField type="password" label="Confirm Password(*)" onChange={(e) => handleConfirmChange(e, password)} value={confirm}/>
+                        {showConfirm && <p className="warning">Confirm your password, please!</p>}
+                        {showConfirmType && <p className="warning">Your password is not match!</p>} */}
+
+                        <TextField label="Address(*)" onChange={(e) => handleAddressChange(e)} value={address} placeholder="Input your address"/>
+                        {showAddress && <p className="warning">Input your address, please!</p>}
+
+                        <TextField label="Phone Number(*)" onChange={(e) => handlePhoneChange(e)}  value={phone} placeholder="Input your phone number"/>
+                        {showPhone && <p className="warning">Input your phone numbers, please!</p>}
+                        {showPhoneType && <p className="warning">Your phone number is not right format!</p>}
+
+                        <Button onClick={(e) => handleSubmit(e)}>Submit</Button>
+                        {verify && 
+                            <ReCAPTCHA
+                            sitekey="6LftMKEaAAAAAMFVIG7Qcma2394rdYh5srsZlnXd"
+                            onChange={handleVerified}
+                            />
+                        }
+                        </FormLayout>
+                    </div>
+                </div>
+            }
+            <div className="row">
+                <div className="col l-10 l-0-1">
+
+                </div>
+            </div>
+        
+        </>
     )
 }
 export default Form;
