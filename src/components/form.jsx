@@ -3,7 +3,7 @@
 import {TextField, FormLayout, Button} from '@shopify/polaris';
 import { useState, useCallback } from 'react';
 import ReCAPTCHA from "react-google-recaptcha";
-
+const url = "https://my-json-server.typicode.com/danhloc112/form-polaris/users"
 const Form = () => {
     const [showFirstName,setShowFirstName] = useState('')
     const [firstName,setFirstName] = useState('')
@@ -155,12 +155,31 @@ const Form = () => {
     //         alert('Please input all of fields!')
     //     }
     // }, [])
-    const handleSubmit = (e) => {
-        console.log("object", e);
-        if (verify && firstOk && lastOk && userOk && emailOk && passOk && addressOk) {
+    const handleSubmit = async (e) => {
+        if (verify && firstOk && phoneOk && emailOk && addressOk) {
+            
+        await fetch(url, {
+            method: 'POST',
+            body: JSON.stringify({
+                name: firstName,
+                address: address,
+                phone: phone,
+                email: email
+            }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+            })
+        .then((response) => response.json())
+        .then((json) => console.log("JSON", json));
+        
+       
             alert('Success!')
         }
         else {
+            await fetch(url)
+            .then(res => res.json())
+            .then(js => console.log("JSON", js))
             alert('Please input all of fields!')
         }
     }
