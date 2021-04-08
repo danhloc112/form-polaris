@@ -1,10 +1,12 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 import {TextField, FormLayout, Button} from '@shopify/polaris';
-import { useState, useCallback } from 'react';
+import { useState,useCallback, useEffect } from 'react';
+import {TextStyle, Card, IndexTable,useIndexResourceState } from '@shopify/polaris';
 import ReCAPTCHA from "react-google-recaptcha";
 const url = "https://my-json-server.typicode.com/danhloc112/form-polaris/users"
 const Form = () => {
+    const regex = /[$&+,:;=?@#|'<>.^*()%!-]/;
     const [showFirstName,setShowFirstName] = useState('')
     const [firstName,setFirstName] = useState('')
     const [showPhone,setShowPhone] = useState('')
@@ -31,13 +33,18 @@ const Form = () => {
     const [emailOk, setEmailOk] = useState(false)
     const [addressOk,setAddressOk] = useState(false)
     const [create,setCreate] = useState(false)    
-    
+    const [listData, setListData] = useState([])
     // const [passOk, setPassOk] = useState(false)
     
     
     // const debouncedKeyUp = _.debounce((value) => {
     //     setFirstName(value)
     // }, 500);
+    useEffect(() => {
+        fetch(url)
+        .then(res => res.json())
+        .then(js => setListData(js))
+    },[])
     const handleFullNameChange = useCallback((value) => {
         setFirstName(value)
         if (value === '') {
@@ -159,9 +166,7 @@ const Form = () => {
             })
             .then((response) => response.json())
             .then((json) => console.log("JSON",json));
-        await fetch(url)
-        .then(res => res.json())
-        .then(js => console.log("JSON", js))
+        
         alert('Success!')
         setVerify(false)
         
@@ -175,8 +180,14 @@ const Form = () => {
     //         alert('Please input all of fields!')
     //     }
     // }, [])
+
+    const resourceName = {
+        singular: 'listData',
+        plural: 'listDatas',
+    }
+    
     const handleSubmit = (e) => {
-        
+        console.log("List", listData);
         if (firstOk && phoneOk && emailOk && addressOk) {
             setVerify(true)
         }
@@ -188,6 +199,32 @@ const Form = () => {
             setShowFirstName(true)
         }
     }
+    const {
+        selectedResources,
+        allResourcesSelected,
+        handleSelectionChange,
+      } = useIndexResourceState(listData);
+    const rowMarkup = listData.map(
+        ({ id,name,address,phone,email },index) => 
+            // const addressLink = 'https://www.google.com/maps/place/'+address.split(regex).join('+')
+            ( 
+          <IndexTable.Row
+            id={id}
+            key={id}
+            // selected={selectedResources.includes(id)}
+            position={index}
+          >
+            <IndexTable.Cell>
+              <TextStyle variation="strong">{name}</TextStyle>
+            </IndexTable.Cell>
+            <IndexTable.Cell>{email}</IndexTable.Cell>
+            <IndexTable.Cell>{phone}</IndexTable.Cell>
+            <IndexTable.Cell><a href={`https://www.google.com/maps/place/${address.split(regex).join('+')}`} target="_blank" rel="noreferrer">{address}</a></IndexTable.Cell>
+          </IndexTable.Row>
+        ),
+    );
+    
+
     return (
         <>
             <div className="row navigation">
@@ -242,7 +279,24 @@ const Form = () => {
             }
             <div className="row">
                 <div className="col l-10 l-0-1">
-
+                <Card>
+                    <IndexTable
+                        resourceName={resourceName}
+                        itemCount={listData.length}
+                        selectedItemsCount={
+                        allResourcesSelected ? 'All' : selectedResources.length
+                        }
+                        onSelectionChange={handleSelectionChange}
+                        headings={[
+                        {title: 'Name'},
+                        {title: 'Email'},
+                        {title: 'Phone'},
+                        {title: 'Address'},
+                        ]}
+                    >
+                        {rowMarkup}
+                    </IndexTable>
+                </Card>
                 </div>
             </div>
         
