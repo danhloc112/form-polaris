@@ -10,6 +10,7 @@
   display: flex;
   border-radius: 10px;
   background-color: rgb(255, 255, 255);
+  color: rgb(0, 110, 82);
 }
 .header p {
   justify-content: center;
@@ -27,6 +28,13 @@
   background-color: #ffffff;
   padding: 20px 0;
 } 
+.form-input h1 {
+  color: #006e52;
+}
+.form-input svg {
+  fill: rgb(0,110, 82);
+}
+
 .warning {
   color:rgb(247, 65, 65)
 }

@@ -285,7 +285,7 @@ const Form = () => {
                     <a
                         href={`https://www.google.com/maps/place/${ele.address.split(regex).join('+')}`}
                         target="_blank" rel="noreferrer"
-                        style={{textDecoration: 'none', color:"#0041cc"}}
+                        style={{textDecoration: 'none', color:"#006e52"}}
                     >{ele.address}</a>
                 </Link>
             ]
@@ -296,17 +296,17 @@ const Form = () => {
         <>
             <div className="row navigation">
                 <div className="col l-4 l-0-3 c-8 c-0-2">
-                    <Button style={{ marginRight: 10 }} primary onClick={() => setCreate(!create)}>Create user</Button>
+                    <Button style={{ marginRight: 10 }} primary onClick={() => setCreate(!create)}>Create an user</Button>
                     {' '}
                     {' '}
-                    <Button primary onClick={() => setShow(!show)}>Show user</Button>
+                    <Button primary onClick={() => setShow(!show)}>Show users</Button>
                     {/* <Button primary onClick={() => setShow(!show)}>Show user</Button> */}
                 </div>
             </div>
             {create &&
                 <div className="row form-input">
                     <div className="col l-6 l-0-3 m-8 m-0-2 c-10 c-0-1">
-                    <Heading type="h1">Create User</Heading>
+                    <Heading element="h1">Create An User</Heading>
                     <br/>
                     <FormLayout onSubmit= {(e) => handleSubmit(e)}>
                         <TextField label="Full Name(*)" onChange={(e) => handleFullNameChange(e)} value={firstName} placeholder="Input your first name"/>
@@ -337,10 +337,10 @@ const Form = () => {
                         {showPhoneType && <p className="warning">Your phone number is not right format!</p>}
 
                         <div style={{display: 'flex'}}>
-                            <Button onClick={(e) => handleSubmit(e)}>
+                            <Button onClick={(e) => handleSubmit(e)} primary>
                                 Submit
-                                {loading && <Spinner accessibilityLabel="Submitting" size="small" />}     
                             </Button>
+                            {loading && <Spinner accessibilityLabel="Submitting" size="small" />}     
                             
                         </div>
                         {verify && 
