@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
-import {TextField, FormLayout, Button} from '@shopify/polaris';
+import {TextField, FormLayout, Button, ResourceList, ResourceItem, Avatar} from '@shopify/polaris';
 import { useState,useCallback, useEffect } from 'react';
 import {TextStyle, Card, IndexTable,useIndexResourceState } from '@shopify/polaris';
 import ReCAPTCHA from "react-google-recaptcha";
@@ -183,7 +183,7 @@ const Form = () => {
 
     const resourceName = {
         singular: 'listData',
-        plural: 'listDatas',
+        plural: 'listData',
     }
     
     const handleSubmit = (e) => {
@@ -277,9 +277,9 @@ const Form = () => {
                     </div>
                 </div>
             }
-            <div className="row">
-                <div className="col l-10 l-0-1">
-                <Card>
+            <div className="row form-input">
+                <div className="col l-12">
+                {/* <Card>
                     <IndexTable
                         resourceName={resourceName}
                         itemCount={listData.length}
@@ -296,7 +296,33 @@ const Form = () => {
                     >
                         {rowMarkup}
                     </IndexTable>
-                </Card>
+                </Card> */}
+                    <Card>
+                        <ResourceList
+                            resourceName={{ singular: "listData",plural: "listData" }}
+                            items = {listData}
+                        renderItem={(item) => {
+                            const { id, address, name, phone, email } = item;
+                            const media = <Avatar customer size="medium" name={name} />;
+
+                            return (
+                            <ResourceItem
+                                id={id}
+                                url={`https://www.google.com/maps/place/${address.split(regex).join('+')}`}
+                                target="_blank"
+                                media={media}
+                                accessibilityLabel={`View details for ${name}`}
+                            >
+                                <h3>
+                                        <TextStyle variation="strong">{name} </TextStyle>
+                                        <p><em>{email} | {phone}</em></p>
+                                </h3>
+                                <div>{address}</div>
+                            </ResourceItem>
+                            );
+                        }}
+                        />
+                    </Card>
                 </div>
             </div>
         
