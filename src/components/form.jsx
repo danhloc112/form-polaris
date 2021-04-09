@@ -295,7 +295,7 @@ const Form = () => {
     return (
         <>
             <div className="row navigation">
-                <div className="col l-4 l-0-3 c-8 c-0-2">
+                <div className="col l-4 l-0-3 c-10 c-0-1">
                     <Button style={{ marginRight: 10 }} primary onClick={() => setCreate(!create)}>Create an user</Button>
                     {' '}
                     {' '}
