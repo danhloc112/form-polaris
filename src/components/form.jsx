@@ -310,7 +310,7 @@ const Form = () => {
                     <br/>
                     <FormLayout onSubmit= {(e) => handleSubmit(e)}>
                         <TextField label="Full Name(*)" onChange={(e) => handleFullNameChange(e)} value={firstName} placeholder="Input your first name"/>
-                        {showFirstName && <p className="warning">Input your first name, please!</p>}
+                        {showFirstName && <p className="warning">Input your full name, please!</p>}
                         
 
                         {/* <TextField label="Username(*)" onChange={(e) => handleUserChange(e)} value={username}/>
