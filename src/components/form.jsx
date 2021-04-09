@@ -1,10 +1,13 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
-import {TextField, FormLayout, Button, ResourceList, ResourceItem, Avatar} from '@shopify/polaris';
+import {TextField, FormLayout, Button, ResourceList, ResourceItem, Avatar, Heading, Pagination, Spinner, Link} from '@shopify/polaris';
 import { useState,useCallback, useEffect } from 'react';
-import {TextStyle, Card, IndexTable,useIndexResourceState } from '@shopify/polaris';
+import {TextStyle, Card, IndexTable,useIndexResourceState, Page, DataTable } from '@shopify/polaris';
 import ReCAPTCHA from "react-google-recaptcha";
-const url = "https://my-json-server.typicode.com/danhloc112/form-polaris/users"
+// const url = "https://my-json-server.typicode.com/danhloc112/form-polaris/users"
+const url = "https://606fafc985c3f0001746ecdf.mockapi.io/api/users/";
+let page = 1;
+const limit = 5
 const Form = () => {
     const regex = /[$&+,:;=?@#|'<>.^*()%!-]/;
     const [showFirstName,setShowFirstName] = useState('')
@@ -33,7 +36,14 @@ const Form = () => {
     const [emailOk, setEmailOk] = useState(false)
     const [addressOk,setAddressOk] = useState(false)
     const [create,setCreate] = useState(false)    
-    const [listData, setListData] = useState([])
+    const [listData,setListData] = useState([])
+    const [total,setTotal] = useState([])
+    const [show,setShow] = useState(false)
+    const [loading,setLoading] = useState(false)
+    const [prev,setPrev] = useState(false)
+    const [next,setNext] = useState(true)
+    
+    
     // const [passOk, setPassOk] = useState(false)
     
     
@@ -41,10 +51,16 @@ const Form = () => {
     //     setFirstName(value)
     // }, 500);
     useEffect(() => {
-        fetch(url)
+        fetch(`${url}`)
+            .then(res => res.json())
+            .then(js => setTotal(js))
+        
+        fetch(`${url}?page=${page}&limit=${limit}`)
         .then(res => res.json())
         .then(js => setListData(js))
+            
     },[])
+    
     const handleFullNameChange = useCallback((value) => {
         setFirstName(value)
         if (value === '') {
@@ -152,6 +168,7 @@ const Form = () => {
     //     }
     // },[])
     const handleVerified = async () => {
+        setLoading(true)
         await fetch(url, {
             method: 'POST',
             body: JSON.stringify({
@@ -165,11 +182,14 @@ const Form = () => {
             },
             })
             .then((response) => response.json())
-            .then((json) => console.log("JSON",json));
+            .then((json) => {
+                setListData([...listData,json])
+                setLoading(false)
+            });
         
         alert('Success!')
         setVerify(false)
-        
+        setShow(true)
     }
     // const handleSubmit = useCallback((e, verify,firstOk,lastOk,userOk,emailOk,passOk,addressOk) => {
     //     console.log("object");
@@ -180,14 +200,40 @@ const Form = () => {
     //         alert('Please input all of fields!')
     //     }
     // }, [])
-
-    const resourceName = {
-        singular: 'listData',
-        plural: 'listData',
-    }
+    // console.log("page", Math.ceil(total.length / limit));
     
+    const handleNext = () => {
+        // setPage(page + 1)
+        page += 1;
+        // console.log("page", page);
+        // console.log("result", page * limit);
+        if (page * limit >= total.length) {
+            setNext(false)
+            setPrev(true)
+        }
+        else {
+            setPrev(true)
+        }
+        fetch(`${url}?page=${page}&limit=${limit}`)
+        .then(res => res.json())
+        .then(js => setListData(js))
+    }
+    const handlePrev = () => {
+        // setPage(page-1)
+        page -= 1;
+        if (page === 1) {
+            setPrev(false)
+            setNext(true)
+        }
+        else {
+            setNext(true)
+        }
+        fetch(`${url}?page=${page}&limit=${limit}`)
+        .then(res => res.json())
+        .then(js => setListData(js))
+    }
     const handleSubmit = (e) => {
-        console.log("List", listData);
+        // console.log("List", listData);
         if (firstOk && phoneOk && emailOk && addressOk) {
             setVerify(true)
         }
@@ -199,45 +245,69 @@ const Form = () => {
             setShowFirstName(true)
         }
     }
-    const {
-        selectedResources,
-        allResourcesSelected,
-        handleSelectionChange,
-      } = useIndexResourceState(listData);
-    const rowMarkup = listData.map(
-        ({ id,name,address,phone,email },index) => 
-            // const addressLink = 'https://www.google.com/maps/place/'+address.split(regex).join('+')
-            ( 
-          <IndexTable.Row
-            id={id}
-            key={id}
-            // selected={selectedResources.includes(id)}
-            position={index}
-          >
-            <IndexTable.Cell>
-              <TextStyle variation="strong">{name}</TextStyle>
-            </IndexTable.Cell>
-            <IndexTable.Cell>{email}</IndexTable.Cell>
-            <IndexTable.Cell>{phone}</IndexTable.Cell>
-            <IndexTable.Cell><a href={`https://www.google.com/maps/place/${address.split(regex).join('+')}`} target="_blank" rel="noreferrer">{address}</a></IndexTable.Cell>
-          </IndexTable.Row>
-        ),
-    );
-    
-
+    // const {
+    //     selectedResources,
+    //     allResourcesSelected,
+    //     handleSelectionChange,
+    //   } = useIndexResourceState(listData);
+    // const rowMarkup = listData.map(
+    //     ({ id,name,address,phone,email },index) => 
+    //         // const addressLink = 'https://www.google.com/maps/place/'+address.split(regex).join('+')
+    //         ( 
+    //       <IndexTable.Row
+    //         id={id}
+    //         key={id}
+    //         // selected={selectedResources.includes(id)}
+    //         position={index}
+    //       >
+    //         <IndexTable.Cell>
+    //           <TextStyle variation="strong">{name}</TextStyle>
+    //         </IndexTable.Cell>
+    //         <IndexTable.Cell>{email}</IndexTable.Cell>
+    //         <IndexTable.Cell>{phone}</IndexTable.Cell>
+    //         <IndexTable.Cell><a href={`https://www.google.com/maps/place/${address.split(regex).join('+')}`} target="_blank" rel="noreferrer">{address}</a></IndexTable.Cell>
+    //       </IndexTable.Row>
+    //     ),
+    // );
+    const sourceArr = [];
+    listData.forEach(ele => {
+        sourceArr.push(
+            [
+                ele.name,
+                ele.email,
+                ele.phone,
+                <Link
+                    removeUnderline
+                    target="_blank"
+                    url={``}
+                    key={ele.address}
+                >
+                    <a
+                        href={`https://www.google.com/maps/place/${ele.address.split(regex).join('+')}`}
+                        target="_blank" rel="noreferrer"
+                        style={{textDecoration: 'none', color:"#0041cc"}}
+                    >{ele.address}</a>
+                </Link>
+            ]
+        )
+    })
+    // console.log("Arrr", sourceArr);
     return (
         <>
             <div className="row navigation">
-                <div className="col l-4 l-0-3">
-                <Button style={{ marginRight: 10 }} primary onClick={() => setCreate(!create)}>Create user</Button>
-                {'  '}
-                <Button primary>Show user</Button>
-                
+                <div className="col l-4 l-0-3 c-8 c-0-2">
+                    <Button style={{ marginRight: 10 }} primary onClick={() => setCreate(!create)}>Create user</Button>
+                    {' '}
+                    {' '}
+                    <Button primary onClick={() => setShow(!show)}>Show user</Button>
+                    {/* <Button primary onClick={() => setShow(!show)}>Show user</Button> */}
                 </div>
             </div>
             {create &&
                 <div className="row form-input">
-                    <div className="col l-6 l-0-3">
+                    <div className="col l-6 l-0-3 m-8 m-0-2 c-10 c-0-1">
+                    <Heading type="h1">Create User</Heading>
+                    <br/>
                     <FormLayout onSubmit= {(e) => handleSubmit(e)}>
                         <TextField label="Full Name(*)" onChange={(e) => handleFullNameChange(e)} value={firstName} placeholder="Input your first name"/>
                         {showFirstName && <p className="warning">Input your first name, please!</p>}
@@ -266,7 +336,13 @@ const Form = () => {
                         {showPhone && <p className="warning">Input your phone numbers, please!</p>}
                         {showPhoneType && <p className="warning">Your phone number is not right format!</p>}
 
-                        <Button onClick={(e) => handleSubmit(e)}>Submit</Button>
+                        <div style={{display: 'flex'}}>
+                            <Button onClick={(e) => handleSubmit(e)}>
+                                Submit
+                                {loading && <Spinner accessibilityLabel="Submitting" size="small" />}     
+                            </Button>
+                            
+                        </div>
                         {verify && 
                             <ReCAPTCHA
                             sitekey="6LftMKEaAAAAAMFVIG7Qcma2394rdYh5srsZlnXd"
@@ -277,30 +353,15 @@ const Form = () => {
                     </div>
                 </div>
             }
-            <div className="row form-input">
-                <div className="col l-12">
-                {/* <Card>
-                    <IndexTable
-                        resourceName={resourceName}
-                        itemCount={listData.length}
-                        selectedItemsCount={
-                        allResourcesSelected ? 'All' : selectedResources.length
-                        }
-                        onSelectionChange={handleSelectionChange}
-                        headings={[
-                        {title: 'Name'},
-                        {title: 'Email'},
-                        {title: 'Phone'},
-                        {title: 'Address'},
-                        ]}
-                    >
-                        {rowMarkup}
-                    </IndexTable>
-                </Card> */}
+            {show && <div className="row form-input">
+                <div className="col l-12 m-12 c-10 list-user" >
+                    {/* <Heading type="h1">List Users</Heading>
+                    <br/>
+                
                     <Card>
                         <ResourceList
                             resourceName={{ singular: "listData",plural: "listData" }}
-                            items = {listData}
+                            items = {listData.reverse()}
                         renderItem={(item) => {
                             const { id, address, name, phone, email } = item;
                             const media = <Avatar customer size="medium" name={name} />;
@@ -322,9 +383,45 @@ const Form = () => {
                             );
                         }}
                         />
-                    </Card>
+                    </Card> */}
+                    <Page title="List Users">
+                        <Pagination
+                            
+                            label={`${page}/${Math.ceil(total.length/limit)}`}
+                            hasPrevious={prev}
+                            onPrevious={() => {
+                                // setPage(page-1)
+                                handlePrev()
+                            }}
+                            previousTooltip="Previous"
+                            nextTooltip="Next"
+                            hasNext={next}
+                            onNext={() => {
+                                // setPage(page+1)
+                                handleNext()
+                            }}
+                        />
+                        <br/>
+                        <Card>
+                            <DataTable
+                            columnContentTypes={[
+                                'text',
+                                'text',
+                                'text',
+                                'text',
+                            ]}
+                            headings={['Full Name', 'Email', 'Phone Number', 'Address',]}
+                            rows={sourceArr}
+                            // totals={['', '', '', 255, '$155,830.00']}
+                            />
+                        </Card>
+                    </Page>
+                    
+                    
+                    
+                    
                 </div>
-            </div>
+            </div>}
         
         </>
     )

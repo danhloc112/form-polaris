@@ -8,8 +8,12 @@ function App() {
   return (
     <div className="grid wide ">
       <div className="row">
-        <div className="col l-12 header">
-          <DisplayText size="extraLarge">User Manager</DisplayText>
+        <div className="col l-12 m-12 c-12 header">
+          {/* <div className="row"> */}
+            <div className="col l-6 l-0-3 m-6 m-0-3 c-12">
+              <DisplayText size="extraLarge">User Manager</DisplayText>
+            </div>
+          {/* </div> */}
         </div>
       </div>
       

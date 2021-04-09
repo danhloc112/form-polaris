@@ -12,6 +12,7 @@
     "react-google-recaptcha": "^2.1.0",
     "react-recaptcha": "^2.3.10",
     "react-scripts": "4.0.3",
+    "surge": "^0.22.1",
     "web-vitals": "^1.0.1"
   },
   "scripts": {
