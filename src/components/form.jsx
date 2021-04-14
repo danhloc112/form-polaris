@@ -223,7 +223,9 @@ const Form = () => {
           </IndexTable.Row>
         ),
     );
-    
+    const arr = ["B","A","C","Z","Y","M"]
+    arr.sort((a,b) => a - b)
+    console.log("object", arr);
 
     return (
         <>
